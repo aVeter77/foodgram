@@ -1,15 +1,13 @@
-from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-User = get_user_model()
+from users.models import User
 
 
 class Unit(models.Model):
     name = models.CharField(verbose_name='Название', max_length=50)
 
 
-class IngredientRecipe(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(verbose_name='Название', max_length=200)
     measurement_unit = models.ForeignKey(
         Unit,
@@ -22,10 +20,20 @@ class IngredientRecipe(models.Model):
         return self.name
 
 
+class IngredientRecipe(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.ingredient} {self.recipe}'
+
+
 class Tag(models.Model):
-    name = models.CharField(verbose_name='Название', max_length=50)
+    name = models.CharField(
+        verbose_name='Название', max_length=50, unique=True
+    )
     color = models.CharField(
-        verbose_name='Цвет', max_length=6, default='cccccc'
+        verbose_name='Цвет', max_length=6, default='cccccc', unique=True
     )
     slug = models.SlugField(verbose_name='Псевдоним', unique=True)
 
@@ -33,14 +41,19 @@ class Tag(models.Model):
         return self.name
 
 
+class TagRecipe(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.tag} {self.recipe}'
+
+
 class Recipe(models.Model):
-    tags = models.ForeignKey(
+    tags = models.ManyToManyField(
         Tag,
+        through=TagRecipe,
         verbose_name='Тэги',
-        on_delete=models.SET_NULL,
-        related_name='tags',
-        blank=True,
-        null=True,
     )
     author = models.ForeignKey(
         User,
@@ -50,14 +63,14 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientRecipe',
+        through=IngredientRecipe,
         verbose_name='Ингридиенты',
     )
     name = models.CharField(
         max_length=200,
         verbose_name='Название',
     )
-    # image  = models.ImageField(upload_to='recipes/', null=True, blank=True)
+    image = models.ImageField(verbose_name='Картинка', upload_to='recipes/')
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления, мин',
