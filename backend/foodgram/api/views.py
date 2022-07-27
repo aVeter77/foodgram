@@ -1,8 +1,11 @@
-from recipes.models import Recipe, Tag, User
-from rest_framework import exceptions, generics, permissions, viewsets
+from recipes.models import Favorite, Recipe, Tag, User
+from rest_framework import exceptions, generics, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .serializers import (
     CustomUserSerializer,
+    FavoriteSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
     TagSerializer,
@@ -42,3 +45,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
         return self.perform_create
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def favorite(self, request, pk=None):
+        user = self.request.user
+        recipe = self.get_object()
+        if request.method == 'POST':
+            serializer = FavoriteSerializer(recipe)
+            Favorite.objects.update_or_create(user=user, recipe=recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        Favorite.objects.filter(user=user, recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -31,7 +31,7 @@ def main():
         ing_fixtures.append(fixt_dict)
         i += 1
 
-    with open('ingredient.json', 'w') as fp:
+    with open('fixtures_ingredients.json', 'w') as fp:
         json.dump(ing_fixtures, fp)
 
     units_fixtures = []
@@ -45,7 +45,7 @@ def main():
         units_fixtures.append(fixt_dict)
         i += 1
 
-    with open('unit.json', 'w') as fp:
+    with open('fixtures_units.json', 'w') as fp:
         json.dump(units_fixtures, fp)
 
 
