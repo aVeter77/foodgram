@@ -21,8 +21,23 @@ class Ingredient(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name='ingredientrecipe_ingredients',
+        on_delete=models.CASCADE,
+    )
+    amount = models.IntegerField(
+        verbose_name='Количество',
+        default=1,
+        validators=[
+            MinValueValidator(1),
+        ],
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        related_name='ingredientrecipe_recipes',
+    )
 
     def __str__(self):
         return f'{self.ingredient} {self.recipe}'
@@ -65,6 +80,7 @@ class Recipe(models.Model):
         Ingredient,
         through=IngredientRecipe,
         verbose_name='Ингридиенты',
+        related_name='recipes_ingredients',
     )
     name = models.CharField(
         max_length=200,
@@ -84,6 +100,13 @@ class Recipe(models.Model):
         verbose_name='Дата публикации',
         auto_now_add=True,
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'author'], name='unique_name_author'
+            )
+        ]
 
     def __str__(self):
         return self.name
