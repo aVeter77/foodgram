@@ -5,6 +5,8 @@ from recipes.models import (
     Ingredient,
     IngredientRecipe,
     Recipe,
+    Shopping_cart,
+    Subscription,
     Tag,
     TagRecipe,
     User,
@@ -28,6 +30,9 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
+
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -36,7 +41,16 @@ class CustomUserSerializer(UserSerializer):
             'username',
             'first_name',
             'last_name',
+            'is_subscribed',
         )
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Subscription.objects.filter(
+                author=obj.id, user=user
+            ).exists()
+        return False
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -73,10 +87,17 @@ class IngredientRecipeReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class RecipeInListSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        image_url = obj.image.url
+        return request.build_absolute_uri(image_url)
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -173,7 +194,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         many=True, read_only=True, source='ingredientrecipe_recipes'
     )
     is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.BooleanField(read_only=True)
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -194,4 +215,38 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         if user.is_authenticated:
             return Favorite.objects.filter(recipe=obj.id, user=user).exists()
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Shopping_cart.objects.filter(
+                recipe=obj.id, user=user
+            ).exists()
+        return False
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
+        )
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return Subscription.objects.filter(
+                author=obj.id, user=user
+            ).exists()
         return False

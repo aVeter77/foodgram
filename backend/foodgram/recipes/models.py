@@ -135,7 +135,7 @@ class Subscription(models.Model):
 
 
 class Shopping_cart(models.Model):
-    purchase = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='purchase',
@@ -151,7 +151,7 @@ class Shopping_cart(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'purchase'], name='unique purchase'
+                fields=['recipe', 'user'], name='unique shopping cart'
             )
         ]
 

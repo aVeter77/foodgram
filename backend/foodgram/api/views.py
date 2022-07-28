@@ -1,13 +1,22 @@
-from recipes.models import Favorite, Recipe, Tag, User
+from djoser.views import UserViewSet
+from recipes.models import (
+    Favorite,
+    Recipe,
+    Shopping_cart,
+    Subscription,
+    Tag,
+    User,
+)
 from rest_framework import exceptions, generics, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .serializers import (
     CustomUserSerializer,
-    FavoriteSerializer,
+    RecipeInListSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
+    SubscribeSerializer,
     TagSerializer,
 )
 
@@ -17,7 +26,29 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
 
 
-class CustomCurrentUserViewSet(generics.RetrieveAPIView):
+class CustomUserViewSet(UserViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def subscribe(self, request, id=None):
+        user = self.request.user
+        author = self.get_object()
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(author)
+            Subscription.objects.update_or_create(user=user, author=author)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        Subscription.objects.filter(user=user, author=author).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomCurrentUser(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -46,18 +77,31 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return self.perform_create
 
+    def recipe_in_list(self, request, recipe_model):
+        user = self.request.user
+        recipe = self.get_object()
+        if request.method == 'POST':
+            serializer = RecipeInListSerializer(
+                recipe, context={"request": request}
+            )
+            recipe_model.objects.update_or_create(user=user, recipe=recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        recipe_model.objects.filter(user=user, recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(
         detail=True,
         methods=['post', 'delete'],
         permission_classes=[permissions.IsAuthenticated],
     )
     def favorite(self, request, pk=None):
-        user = self.request.user
-        recipe = self.get_object()
-        if request.method == 'POST':
-            serializer = FavoriteSerializer(recipe)
-            Favorite.objects.update_or_create(user=user, recipe=recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return self.recipe_in_list(request, Favorite)
 
-        Favorite.objects.filter(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def shopping_cart(self, request, pk=None):
+        return self.recipe_in_list(request, Shopping_cart)

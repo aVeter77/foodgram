@@ -1,15 +1,21 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import CustomCurrentUserViewSet, RecipeViewSet, TagViewSet
+from .views import (
+    CustomCurrentUser,
+    CustomUserViewSet,
+    RecipeViewSet,
+    TagViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register(r'tags', TagViewSet)
 router.register(r'recipes', RecipeViewSet)
+router.register(r'users', CustomUserViewSet, basename='custom-user')
 
 urlpatterns = [
+    path('users/me/', CustomCurrentUser.as_view()),
     path('', include(router.urls)),
-    path(r'users/me/', CustomCurrentUserViewSet.as_view()),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]
