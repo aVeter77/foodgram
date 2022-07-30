@@ -87,10 +87,35 @@ class IngredientRecipeReadSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
+class AuthorRecipeSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit.name'
+    )
+    id = serializers.ReadOnlyField(source='ingredient.id')
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class FilteredRecipeInListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        recipes_limit = self.context['request'].query_params.get(
+            'recipes_limit'
+        )
+        if recipes_limit and recipes_limit.isdigit():
+            data = data.all()[: int(recipes_limit)]
+        return super(FilteredRecipeInListSerializer, self).to_representation(
+            data
+        )
+
+
 class RecipeInListSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
     class Meta:
+        list_serializer_class = FilteredRecipeInListSerializer
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
@@ -229,6 +254,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
 
     is_subscribed = serializers.SerializerMethodField()
+    recipes = RecipeInListSerializer(many=True, read_only=True)
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -250,3 +277,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
                 author=obj.id, user=user
             ).exists()
         return False
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()

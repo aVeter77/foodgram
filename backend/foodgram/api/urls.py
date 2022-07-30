@@ -4,6 +4,7 @@ from rest_framework import routers
 from .views import (
     CustomCurrentUser,
     CustomUserViewSet,
+    IngredientViewSet,
     RecipeViewSet,
     TagViewSet,
 )
@@ -11,6 +12,7 @@ from .views import (
 router = routers.DefaultRouter()
 router.register(r'tags', TagViewSet)
 router.register(r'recipes', RecipeViewSet)
+router.register(r'ingredients', IngredientViewSet)
 router.register(r'users', CustomUserViewSet, basename='custom-user')
 
 urlpatterns = [

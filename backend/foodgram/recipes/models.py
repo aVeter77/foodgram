@@ -16,6 +16,9 @@ class Ingredient(models.Model):
         related_name='units',
     )
 
+    class Meta:
+        indexes = [models.Index(fields=['name'])]
+
     def __str__(self):
         return self.name
 
