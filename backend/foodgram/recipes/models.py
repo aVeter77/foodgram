@@ -1,10 +1,17 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
 
 
 class Unit(models.Model):
     name = models.CharField(verbose_name='Название', max_length=50)
+
+    class Meta:
+        verbose_name = 'Ед. измерения'
+        verbose_name_plural = 'Ед. измерения'
+
+    def __str__(self):
+        return self.name
 
 
 class Ingredient(models.Model):
@@ -18,6 +25,8 @@ class Ingredient(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=['name'])]
+        verbose_name = 'Ингредиенты'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -28,6 +37,7 @@ class IngredientRecipe(models.Model):
         Ingredient,
         related_name='ingredientrecipe_ingredients',
         on_delete=models.CASCADE,
+        verbose_name='Ингредиент',
     )
     amount = models.IntegerField(
         verbose_name='Количество',
@@ -40,10 +50,15 @@ class IngredientRecipe(models.Model):
         'Recipe',
         on_delete=models.CASCADE,
         related_name='ingredientrecipe_recipes',
+        verbose_name='Рецепт',
     )
 
+    class Meta:
+        verbose_name = 'Ингредиенты для рецептов'
+        verbose_name_plural = 'Ингредиенты для рецептов'
+
     def __str__(self):
-        return f'{self.ingredient} {self.recipe}'
+        return f'{self.recipe}'
 
 
 class Tag(models.Model):
@@ -51,20 +66,38 @@ class Tag(models.Model):
         verbose_name='Название', max_length=50, unique=True
     )
     color = models.CharField(
-        verbose_name='Цвет', max_length=6, default='cccccc', unique=True
+        verbose_name='Цвет', max_length=6, default='#CCCCCC', unique=True
     )
     slug = models.SlugField(verbose_name='Псевдоним', unique=True)
+
+    class Meta:
+        verbose_name = 'Тэги'
+        verbose_name_plural = 'Тэги'
 
     def __str__(self):
         return self.name
 
 
 class TagRecipe(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        related_name='tagrecipe_tag',
+        verbose_name='Тэг',
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        related_name='tagrecipe_recipes',
+        verbose_name='Рецепт',
+    )
+
+    class Meta:
+        verbose_name = 'Тэги для рецептов'
+        verbose_name_plural = 'Тэги для рецептов'
 
     def __str__(self):
-        return f'{self.tag} {self.recipe}'
+        return f'{self.tag}'
 
 
 class Recipe(models.Model):
@@ -92,10 +125,9 @@ class Recipe(models.Model):
     image = models.ImageField(verbose_name='Картинка', upload_to='recipes/')
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.IntegerField(
-        verbose_name='Время приготовления, мин',
+        verbose_name='Время, мин',
         default=1,
         validators=[
-            MaxValueValidator(100),
             MinValueValidator(1),
         ],
     )
@@ -110,6 +142,23 @@ class Recipe(models.Model):
                 fields=['name', 'author'], name='unique_name_author'
             )
         ]
+        ordering = ['-pub_date']
+        verbose_name = 'Рецепты'
+        verbose_name_plural = 'Рецепты'
+
+    @property
+    def tags_list(self):
+        return list(self.tags.values_list('name', flat=True))
+
+    @property
+    def ingredients_list(self):
+        return list(
+            self.ingredients.values_list(
+                'name',
+                'ingredientrecipe_ingredients__amount',
+                'measurement_unit__name',
+            )
+        )
 
     def __str__(self):
         return self.name
@@ -120,13 +169,13 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='subscription',
-        verbose_name='Подписки',
+        verbose_name='Подписчик',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='subscriber',
-        verbose_name='Подписчики',
+        verbose_name='Автор',
     )
 
     class Meta:
@@ -135,6 +184,8 @@ class Subscription(models.Model):
                 fields=['author', 'user'], name='unique subscription'
             )
         ]
+        verbose_name = 'Подписки'
+        verbose_name_plural = 'Подписки'
 
 
 class Shopping_cart(models.Model):

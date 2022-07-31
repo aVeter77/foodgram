@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_filters',
+    'django_admin_listfilter_dropdown',
 ]
 
 MIDDLEWARE = [
