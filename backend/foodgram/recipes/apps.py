@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class RecipesConfig(AppConfig):
     name = 'recipes'
-    verbose_name = "Все рецепты"
+    verbose_name = 'Все рецепты'

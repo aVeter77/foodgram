@@ -186,20 +186,21 @@ class Subscription(models.Model):
         ]
         verbose_name = 'Подписки'
         verbose_name_plural = 'Подписки'
+        app_label = 'users'
 
 
-class Shopping_cart(models.Model):
+class ShoppingСart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='purchase',
-        verbose_name='Покупки',
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name='recipe',
-        verbose_name='Рецепты',
+        verbose_name='Рецепт',
     )
 
     class Meta:
@@ -208,6 +209,9 @@ class Shopping_cart(models.Model):
                 fields=['recipe', 'user'], name='unique shopping cart'
             )
         ]
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
+        app_label = 'users'
 
 
 class Favorite(models.Model):
@@ -221,7 +225,7 @@ class Favorite(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         related_name='favorite',
-        verbose_name='Избранные',
+        verbose_name='Рецепт',
     )
 
     class Meta:
@@ -230,3 +234,6 @@ class Favorite(models.Model):
                 fields=['recipe', 'user'], name='unique favotite'
             )
         ]
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
+        app_label = 'users'

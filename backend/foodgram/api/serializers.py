@@ -5,7 +5,7 @@ from recipes.models import (
     Ingredient,
     IngredientRecipe,
     Recipe,
-    Shopping_cart,
+    ShoppingСart,
     Subscription,
     Tag,
     TagRecipe,
@@ -245,7 +245,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
         if user.is_authenticated:
-            return Shopping_cart.objects.filter(
+            return ShoppingСart.objects.filter(
                 recipe=obj.id, user=user
             ).exists()
         return False

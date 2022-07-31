@@ -6,7 +6,7 @@ from recipes.models import (
     Favorite,
     Ingredient,
     Recipe,
-    Shopping_cart,
+    ShoppingСart,
     Subscription,
     Tag,
     User,
@@ -150,7 +150,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(permissions.IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
-        return self.recipe_in_list(request, Shopping_cart)
+        return self.recipe_in_list(request, ShoppingСart)
 
     @action(
         detail=False,

@@ -17,6 +17,7 @@ class IngredientAdmin(ModelAdmin):
     list_editable = ('measurement_unit',)
     list_display_links = ('id', 'name')
     search_fields = ('name',)
+    list_filter = (('name', DropdownFilter),)
     empty_value_display = '-пусто-'
 
 
