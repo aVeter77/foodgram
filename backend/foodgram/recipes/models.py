@@ -39,7 +39,7 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингредиент',
     )
-    amount = models.IntegerField(
+    amount = models.PositiveIntegerField(
         verbose_name='Количество',
         default=1,
         validators=[
@@ -66,7 +66,7 @@ class Tag(models.Model):
         verbose_name='Название', max_length=50, unique=True
     )
     color = models.CharField(
-        verbose_name='Цвет', max_length=6, default='#CCCCCC', unique=True
+        verbose_name='Цвет', max_length=7, default='#CCCCCC', unique=True
     )
     slug = models.SlugField(verbose_name='Псевдоним', unique=True)
 
@@ -124,7 +124,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(verbose_name='Картинка', upload_to='recipes/')
     text = models.TextField(verbose_name='Описание')
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveIntegerField(
         verbose_name='Время, мин',
         default=1,
         validators=[

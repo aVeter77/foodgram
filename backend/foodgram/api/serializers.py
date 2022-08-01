@@ -1,3 +1,4 @@
+from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (
@@ -59,6 +60,14 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientRecipe
         fields = ('id', 'amount')
+
+
+class IngredientReadSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -165,24 +174,28 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
         return value
 
+    @transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
 
-        for ingredient in ingredients:
-            id = ingredient.get('id')
-            amount = ingredient.get('amount')
-            obj = Ingredient.objects.get(pk=id)
-            IngredientRecipe.objects.create(
-                ingredient=obj, amount=amount, recipe=recipe
+        objs_ingredients = [
+            IngredientRecipe(
+                ingredient=Ingredient.objects.get(pk=ingredient.get('id')),
+                amount=ingredient.get('amount'),
+                recipe=recipe,
             )
+            for ingredient in ingredients
+        ]
+        IngredientRecipe.objects.bulk_create(objs_ingredients)
 
-        for tag in tags:
-            TagRecipe.objects.create(tag=tag, recipe=recipe)
+        objs_tags = [TagRecipe(tag=tag, recipe=recipe) for tag in tags]
+        TagRecipe.objects.bulk_create(objs_tags)
 
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')

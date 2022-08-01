@@ -27,7 +27,7 @@ from .filters import RecipeFilter
 from .permissions import AuthorOrReadOnly
 from .serializers import (
     CustomUserSerializer,
-    IngredientSerializer,
+    IngredientReadSerializer,
     RecipeInListSerializer,
     RecipeReadSerializer,
     RecipeWriteSerializer,
@@ -45,7 +45,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+    serializer_class = IngredientReadSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
@@ -66,6 +66,10 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         user = self.request.user
         author = self.get_object()
+        if user == author:
+            raise exceptions.ValidationError(
+                'На самого себя подписаться нельзя.'
+            )
         if request.method == 'POST':
             serializer = SubscribeSerializer(
                 author, context={"request": request}
@@ -97,10 +101,7 @@ class CustomCurrentUser(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        obj = queryset.get(pk=self.request.user.id)
-        self.check_object_permissions(self.request, obj)
-        return obj
+        return self.queryset.get(pk=self.request.user.id)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -112,10 +113,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
-        if self.request.method in ['PUT', 'POST']:
+        if self.request.method in ['PATCH', 'POST']:
             return RecipeWriteSerializer
-        elif self.request.method == 'PATCH':
-            raise exceptions.ValidationError('Метод PATCH не разрешен.')
+        elif self.request.method == 'PUT':
+            raise exceptions.ValidationError('Метод PUT не разрешен.')
         return self.serializer_class
 
     def perform_create(self, serializer):
