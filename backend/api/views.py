@@ -2,7 +2,6 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from paginators import CustomPaginator
 from recipes.models import (
     Favorite, Ingredient, Recipe, ShoppingСart, Subscription, Tag, User,
 )
@@ -14,6 +13,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from .filters import RecipeFilter
+from .paginators import CustomPaginator
 from .permissions import AuthorOrReadOnly
 from .serializers import (
     CustomUserSerializer, IngredientReadSerializer, RecipeInListSerializer,
