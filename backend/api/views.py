@@ -9,7 +9,6 @@ from rest_framework import (
     exceptions, filters, generics, permissions, status, viewsets,
 )
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from .filters import RecipeFilter
@@ -42,7 +41,7 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = (permissions.AllowAny,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPaginator
 
     @action(
         detail=True,
