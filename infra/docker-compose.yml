@@ -7,8 +7,7 @@ services:
     env_file:
       - ./.env
   backend:
-    build:
-      context: ../backend
+    image: aveter77/backend_foodgram:latest
     restart: always
     volumes:
       - backend_static:/app/static/
@@ -18,9 +17,7 @@ services:
     env_file:
       - ./.env
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: aveter77/fronend_foodgram:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
