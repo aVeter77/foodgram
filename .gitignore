@@ -149,3 +149,4 @@ dmypy.json
 static/
 media/
 db.json
+.env

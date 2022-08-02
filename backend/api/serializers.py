@@ -64,6 +64,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientReadSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
+    measurement_unit = serializers.ReadOnlyField(
+        source='measurement_unit.name'
+    )
 
     class Meta:
         model = Ingredient
