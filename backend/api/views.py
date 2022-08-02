@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from paginators import CustomPaginator
 from recipes.models import (
     Favorite, Ingredient, Recipe, ShoppingСart, Subscription, Tag, User,
 )
@@ -93,7 +94,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeReadSerializer
     permission_classes = (AuthorOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPaginator
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
