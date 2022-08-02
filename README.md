@@ -10,7 +10,7 @@
 
 Образs на Dockerhub:
 - [Backend](https://hub.docker.com/repository/docker/aveter77/backend_foodgram/tags)
-- [Fronend](https://hub.docker.com/repository/docker/aveter77/frontend_foodgram/tags)
+- [Frontend](https://hub.docker.com/repository/docker/aveter77/frontend_foodgram/tags)
 
 ## Алгоритм регистрации пользователей
 1. Пользователь отправляет POST-запрос на эндпоинт `/api/users/` с параметрами
