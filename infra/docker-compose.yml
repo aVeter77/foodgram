@@ -17,7 +17,7 @@ services:
     env_file:
       - ./.env
   frontend:
-    image: aveter77/fronend_foodgram:latest
+    image: aveter77/frontend_foodgram:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
