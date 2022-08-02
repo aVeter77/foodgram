@@ -23,6 +23,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - backend
   nginx:
     image: nginx:1.19.3
     ports:
@@ -33,6 +35,8 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - backend_static:/usr/share/nginx/html/backend_static/:ro
       - media_value:/usr/share/nginx/html/media/:ro
+    depends_on:
+      - frontend
 volumes:
   db:
   backend_static:

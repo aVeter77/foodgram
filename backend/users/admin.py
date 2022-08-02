@@ -1,7 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
 from django_admin_listfilter_dropdown.filters import (
-    DropdownFilter,
-    RelatedDropdownFilter,
+    DropdownFilter, RelatedDropdownFilter,
 )
 from recipes.models import Favorite, ShoppingСart, Subscription
 
