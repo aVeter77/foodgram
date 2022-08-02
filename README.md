@@ -8,7 +8,9 @@
 
 Полное описание API [http://130.193.54.197/api/docs/](http://130.193.54.197/api/docs/)
 
-Образ доступен на [Dockerhub](https://hub.docker.com/r/aveter77/api_yamdb/tags).
+Образs на Dockerhub:
+- [Backend](https://hub.docker.com/repository/docker/aveter77/backend_foodgram/tags)
+- [Fronend](https://hub.docker.com/repository/docker/aveter77/frontend_foodgram/tags)
 
 ## Алгоритм регистрации пользователей
 1. Пользователь отправляет POST-запрос на эндпоинт `/api/users/` с параметрами
