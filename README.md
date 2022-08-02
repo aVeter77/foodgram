@@ -8,7 +8,7 @@
 
 Полное описание API [http://130.193.54.197/api/docs/](http://130.193.54.197/api/docs/)
 
-Образs на Dockerhub:
+Образы на Dockerhub:
 - [Backend](https://hub.docker.com/repository/docker/aveter77/backend_foodgram/tags)
 - [Frontend](https://hub.docker.com/repository/docker/aveter77/frontend_foodgram/tags)
 
