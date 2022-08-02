@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 services:
   db:
     image: postgres:13.0-alpine
@@ -33,6 +33,7 @@ services:
       - backend_static:/usr/share/nginx/html/backend_static/:ro
       - media_value:/usr/share/nginx/html/media/:ro
     depends_on:
+      - backend
       - frontend
 volumes:
   db:
