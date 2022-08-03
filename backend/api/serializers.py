@@ -168,11 +168,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 raise exceptions.ValidationError(
                     'Такой ингредиент не существует.'
                 )
-        for amount in data['ingredients'].get('amount'):
-            if not amount > 0:
-                raise exceptions.ValidationError(
-                    'Нужно указать количество ингредиентов больше 0.'
-                )
 
         return data
 
