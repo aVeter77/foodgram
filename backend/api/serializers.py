@@ -157,16 +157,21 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                           for ingredient in data['ingredients']]
         if len(ingredients_id) != len(list(set(ingredients_id))):
             raise exceptions.ValidationError(
-                'Ингредиенты не должны повторяться'
+                'Ингредиенты не должны повторяться.'
             )
         elif len(ingredients_id) == 0:
             raise exceptions.ValidationError(
-                'В рецепте должны быть ингредиенты'
+                'В рецепте должны быть ингредиенты.'
             )
         for id in ingredients_id:
             if not Ingredient.objects.filter(pk=id).exists():
                 raise exceptions.ValidationError(
-                    'Такой ингредиент не существует'
+                    'Такой ингредиент не существует.'
+                )
+        for amount in data['ingredients'].get('amount'):
+            if not amount > 0:
+                raise exceptions.ValidationError(
+                    'Нужно указать количество ингредиентов больше 0.'
                 )
 
         return data
