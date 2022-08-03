@@ -54,6 +54,11 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingredient', 'recipe'], name='unique ingredientrecipe'
+            )
+        ]
         verbose_name = 'Ингредиенты для рецептов'
         verbose_name_plural = 'Ингредиенты для рецептов'
 
@@ -93,6 +98,11 @@ class TagRecipe(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tag', 'recipe'], name='unique tagrecipe'
+            )
+        ]
         verbose_name = 'Тэги для рецептов'
         verbose_name_plural = 'Тэги для рецептов'
 

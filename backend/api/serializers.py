@@ -152,8 +152,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             )
         ]
 
-    def validate_ingredients(self, value):
-        ingredients_id = [ingredient.get('id') for ingredient in value]
+    def validate(self, data):
+        ingredients_id = [ingredient.get('id')
+                          for ingredient in data['ingredients']]
         if len(ingredients_id) != len(list(set(ingredients_id))):
             raise exceptions.ValidationError(
                 'Ингредиенты не должны повторяться'
@@ -168,7 +169,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     'Такой ингредиент не существует'
                 )
 
-        return value
+        return data
 
     @transaction.atomic
     def create(self, validated_data):
