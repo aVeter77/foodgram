@@ -4,9 +4,9 @@
 
 ![example workflow](https://github.com/aVeter77/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-Пример работы приложения [http://130.193.54.197/recipes/](http://130.193.54.197/recipes/)
+Пример работы приложения [http://foodgram.aveter77.site/recipes/](http://foodgram.aveter77.site/recipes/)
 
-Полное описание API [http://130.193.54.197/api/docs/](http://130.193.54.197/api/docs/)
+Полное описание API [http://foodgram.aveter77.site/api/docs/](http://foodgram.aveter77.site/api/docs/)
 
 Образы на Dockerhub:
 - [Backend](https://hub.docker.com/repository/docker/aveter77/backend_foodgram/tags)

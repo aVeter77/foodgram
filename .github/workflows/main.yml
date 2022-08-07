@@ -76,8 +76,6 @@ jobs:
             sudo docker image rm -f aveter77/backend_foodgram:latest
             sudo docker image rm -f aveter77/frontend_foodgram:latest
             sudo systemctl stop nginx
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/backend:latest
-            sudo docker image rm ${{ secrets.DOCKER_USERNAME }}/frontend:latest
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
@@ -87,6 +85,8 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo 'SECRET_KEY=${{ secrets.SECRET_KEY }}' >> .env
+            echo 'VIRTUAL_HOST=${{ secrets.VIRTUAL_HOST }}' >> .env
+            echo 'VIRTUAL_PORT=${{ secrets.VIRTUAL_PORT }}' >> .env
             sudo docker-compose up -d
 
   send_message:
