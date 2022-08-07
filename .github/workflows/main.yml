@@ -75,6 +75,7 @@ jobs:
             sudo docker image rm -f aveter77/backend_foodgram:latest
             sudo docker image rm -f aveter77/frontend_foodgram:latest
             sudo systemctl stop nginx
+            cd docker/foodgram/
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
