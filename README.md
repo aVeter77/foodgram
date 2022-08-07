@@ -92,7 +92,7 @@ docker-compose exec backend python manage.py collectstatic --no-input
 ```
 cd infra/
 cat fixtures.json | docker-compose backend python manage.py loaddata --format=json -
-docker-compose cp media/ backend:/app/
+docker-compose cp media_fixtures/recipes/ backend:/app/media/
 ```
 
 ## Примеры запросов
