@@ -91,7 +91,7 @@ docker-compose exec backend python manage.py collectstatic --no-input
 ## Заполнение базы начальными данными
 ```
 cd infra/
-cat fixtures.json | docker-compose backend python manage.py loaddata --format=json -
+cat fixtures.json | docker-compose exec -T backend python manage.py loaddata --format=json -
 docker-compose cp media_fixtures/recipes/ backend:/app/media/
 ```
 
