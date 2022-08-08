@@ -35,11 +35,7 @@ jobs:
         with:
           context: ./backend
           tags: ${{ secrets.DOCKER_USERNAME }}/backend_foodgram:v1.0-hw, ${{ secrets.DOCKER_USERNAME }}/backend_foodgram:latest
-      - name: Set up Docker Buildx Frontend
-        uses: docker/setup-buildx-action@v1 
-        with:
-          context: ./frontend
-          tags: ${{ secrets.DOCKER_USERNAME }}/frontend_foodgram:v1.0-hw, ${{ secrets.DOCKER_USERNAME }}/frontend_foodgram:latest
+
       - name: Login to Docker 
         uses: docker/login-action@v1 
         with:
