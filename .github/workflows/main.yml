@@ -69,13 +69,13 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd docker/foodgram/
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose rm frontend
             sudo docker image rm -f aveter77/backend_foodgram:latest
             sudo docker image rm -f aveter77/frontend_foodgram:latest
             sudo systemctl stop nginx
-            cd docker/foodgram/
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
